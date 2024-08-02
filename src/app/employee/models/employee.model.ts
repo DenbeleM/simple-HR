@@ -1,8 +1,10 @@
+// src/app/models/employee.model.ts
 export interface Employee {
-  id?: number;  // Optional because it is auto-generated
+  id?: number;
   firstName: string;
   lastName: string;
   email: string;
-  dob: string;  // Date of birth
+  dob: string;
   gender: string;
+  companyId: number; // Add this field
 }

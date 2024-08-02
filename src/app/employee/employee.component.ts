@@ -5,8 +5,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EmployeeService } from '../services/employee.service';
-import { Employee } from './models/employee.model';
-
+import { CompanyService } from '../services/company.service';
+import { Employee } from '../employee/models/employee.model';
+import { Company } from '../employee/models/company.model';
 @Component({
   selector: 'app-employee',
   templateUrl: './employee.component.html',
@@ -14,8 +15,14 @@ import { Employee } from './models/employee.model';
 })
 export class EmployeeComponent implements OnInit, AfterViewInit {
   employeeForm: FormGroup;
-  dataSource = new MatTableDataSource<Employee>();
-  displayedColumns: string[] = ['id', 'firstName', 'lastName', 'email', 'dob', 'gender', 'action'];
+  companies: any[] = [
+    { id: 1, name: 'Google' },
+    { id: 2, company: 'TikTok' },
+    { id: 3, name: 'Facebook' },
+    { id: 4, name: 'Xoka' }
+  ];
+ dataSource = new MatTableDataSource<Employee>();
+  displayedColumns: string[] = ['id', 'firstName', 'lastName', 'email', 'dob', 'gender', 'companyName', 'action'];
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -23,26 +30,28 @@ export class EmployeeComponent implements OnInit, AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private employeeService: EmployeeService,
+    private companyService: CompanyService,
     public dialogRef: MatDialogRef<EmployeeComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Employee
   ) {}
 
   ngOnInit(): void {
     this.employeeForm = this.fb.group({
-      id: [''],  // Add id field for editing
+      id: [''],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       dob: ['', Validators.required],
-      gender: ['', Validators.required]
+      gender: ['', Validators.required],
+      companyId: ['', Validators.required]
     });
 
-    // Populate form if data is provided (for editing)
     if (this.data) {
       this.employeeForm.patchValue(this.data);
     }
 
-    this.fetchEmployees(); // Fetch employees on initialization
+    this.fetchEmployees();
+    this.fetchCompanies();
   }
 
   ngAfterViewInit(): void {
@@ -61,43 +70,48 @@ export class EmployeeComponent implements OnInit, AfterViewInit {
     });
   }
 
+  fetchCompanies(): void {
+    this.companyService.getCompanies().subscribe({
+      next: (companies: Company[]) => {
+        this.companies = companies;
+      },
+      error: (err) => {
+        console.error('Error fetching companies:', err);
+      }
+    });
+  }
+
   onFormSubmit(): void {
     if (this.employeeForm.valid) {
       const employeeData = this.employeeForm.value;
       if (employeeData.id) {
-        // Edit existing employee
         this.employeeService.updateEmployee(employeeData).subscribe({
           next: () => {
-            console.log('Employee Updated');
             alert('Employee updated successfully');
-            this.dialogRef.close(); // Close the dialog
-            this.fetchEmployees(); // Refresh employee list
+            this.dialogRef.close();
+            this.fetchEmployees();
           },
           error: (err) => {
             console.error('Error updating employee:', err);
           }
         });
       } else {
-        // Add new employee
         this.employeeService.addEmployee(employeeData).subscribe({
           next: () => {
-            console.log('Employee Added');
             alert('Employee added successfully');
-            this.dialogRef.close(); // Close the dialog
-            this.fetchEmployees(); // Refresh employee list
+            this.dialogRef.close();
+            this.fetchEmployees();
           },
           error: (err) => {
             console.error('Error adding employee:', err);
           }
         });
       }
-    } else {
-      console.log('Form is invalid');
     }
   }
 
   onCancel(): void {
-    this.dialogRef.close(); // Close the dialog
+    this.dialogRef.close();
   }
 
   applyFilter(event: Event): void {
@@ -108,4 +122,10 @@ export class EmployeeComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator.firstPage();
     }
   }
+
+  getCompanyName(companyId: number): string {
+    const company = this.companies.find(c => c.id === companyId);
+    return company ? company.name : 'Unknown';
+  }
+  
 }
