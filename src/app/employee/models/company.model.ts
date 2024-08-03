@@ -1,6 +1,8 @@
+// src/app/employee/models/company.model.ts
+import { Employee } from './employee.model';
+
 export interface Company {
-  id?: number;
-  firstName: string;
-  lastName: string;
-  company: string;
+  id: number;
+  name: string; // Updated from 'company' to 'name'
+  employees: Employee[]; // Include employees
 }

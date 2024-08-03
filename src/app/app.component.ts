@@ -17,8 +17,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['firstName', 'lastName', 'email', 'gender', 'dob'];
   dataSource = new MatTableDataSource<Employee>();
 
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort!: MatSort;
 
   constructor(private employeeService: EmployeeService, private dialog: MatDialog) {}
 
@@ -44,7 +44,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   empForm(): void {
     const dialogRef = this.dialog.open(EmployeeComponent, {
-      // width: '800px',
       data: {} // Pass any required data here
     });
 
@@ -80,14 +79,15 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
   }
-    deleteEmployee(employee: Employee): void {
-      this.employeeService.deleteEmployee(employee.id).subscribe({
-        next: () => {
-          this.fetchEmployees(); // Refresh employee list after deletion
-        },
-        error: (err) => {
-          console.error('Error deleting employee:', err);
-        }
-      });
-    }
+
+  deleteEmployee(employee: Employee): void {
+    this.employeeService.deleteEmployee(employee.id).subscribe({
+      next: () => {
+        this.fetchEmployees(); // Refresh employee list after deletion
+      },
+      error: (err) => {
+        console.error('Error deleting employee:', err);
+      }
+    });
+  }
 }

@@ -1,25 +1,28 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Company } from '../employee/models/company.model';
 @Injectable({
   providedIn: 'root'
 })
 export class CompanyService {
+  private baseUrl = 'api/companies';
 
-  private companies: Company[] = [
-    { firstName: 'John', lastName: 'Doe', company: 'Company A' },
-    { firstName: 'Jane', lastName: 'Smith', company: 'Company B' }
-  ];
+  constructor(private http: HttpClient) {}
 
   getCompanies(): Observable<Company[]> {
-    return of(this.companies);
+    return this.http.get<Company[]>(this.baseUrl);
   }
 
-  updateCompany(company: Company): Observable<void> {
-    const index = this.companies.findIndex(c => c.firstName === company.firstName && c.lastName === company.lastName);
-    if (index > -1) {
-      this.companies[index] = company;
-    }
-    return of();
+  addCompany(company: Company): Observable<Company> {
+    return this.http.post<Company>(this.baseUrl, company);
+  }
+
+  updateCompany(company: Company): Observable<Company> {
+    return this.http.put<Company>(`${this.baseUrl}/${company.id}`, company);
+  }
+
+  deleteCompany(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

@@ -5,15 +5,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';  // Updated import
-import { AppRoutingModule } from './app-routing.module'; // Import routing module
-
+import { MatSelectModule } from '@angular/material/select'; 
+import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { EmployeeComponent } from './employee/employee.component';
 import { InMemoryDataService } from './inmemory-data.service';
 import { EmployeeService } from './services/employee.service';
-import { CompanyService } from './services/company.service';  // Add this line
+import { CompanyService } from './services/company.service';  
 import { CompanyComponent } from './company/company.component';
 
 // Angular Material imports
@@ -31,12 +30,11 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { EditDialogComponent } from './company/edit-dialog.component/edit-dialog.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,
     EmployeeComponent,
-    CompanyComponent  ,// Add this line
+    CompanyComponent,
     EditDialogComponent
   ],
   imports: [
@@ -45,7 +43,6 @@ import { EditDialogComponent } from './company/edit-dialog.component/edit-dialog
     ReactiveFormsModule,
     HttpClientModule,
     HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService),
-
     // Angular Material modules
     MatIconModule,
     MatToolbarModule,
@@ -61,17 +58,14 @@ import { EditDialogComponent } from './company/edit-dialog.component/edit-dialog
     MatSortModule,
     MatOptionModule,
     MatSelectModule,
-
-
-    AppRoutingModule // Add routing module here
-
+    AppRoutingModule
   ],
   entryComponents: [
     EmployeeComponent,
-    CompanyComponent 
-    ,EditDialogComponent // Add this line if you're using Angular 8 for dialog components
+    CompanyComponent,
+    EditDialogComponent
   ],
-  providers: [EmployeeService, CompanyService,],  // Add CompanyService
+  providers: [EmployeeService, CompanyService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

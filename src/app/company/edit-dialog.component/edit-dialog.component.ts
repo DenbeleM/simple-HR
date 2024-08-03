@@ -1,34 +1,29 @@
 import { Component, Inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Company } from '../../employee/models/company.model';
-
+import { Company } from 'src/app/employee/models/company.model';
 @Component({
   selector: 'app-edit-dialog',
-  templateUrl: './edit-dialog.component.html',  // Ensure this path is correct
-  styleUrls: []    // Ensure this path is correct
+  templateUrl: './edit-dialog.component.html'
 })
 export class EditDialogComponent {
-  form: FormGroup;
+  companyForm: FormGroup;
 
   constructor(
+    private fb: FormBuilder,
     public dialogRef: MatDialogRef<EditDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Company,
-    private fb: FormBuilder
+    @Inject(MAT_DIALOG_DATA) public data: { company: Company }
   ) {
-    this.form = this.fb.group({
-      firstName: [data.firstName],
-      lastName: [data.lastName],
-      company: [data.company]
+    this.companyForm = this.fb.group({
+      id: [data.company ? data.company.id : null],
+      name: [data.company ? data.company.name : '', Validators.required],
+      employees: [data.company ? data.company.employees : []]
     });
   }
 
-  onSave(): void {
-    if (this.form.valid) {
-      this.dialogRef.close({
-        ...this.data,
-        ...this.form.value
-      });
+  onSubmit(): void {
+    if (this.companyForm.valid) {
+      this.dialogRef.close(this.companyForm.value);
     }
   }
 
